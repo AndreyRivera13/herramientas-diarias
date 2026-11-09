@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Día 01 · Video a MP3 — Herramientas diarias</title>
+  <meta name="description" content="Convierte video o audio a MP3 en tu navegador. Los archivos nunca salen de tu dispositivo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1424;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --danger: #fb7185;
+      --warn: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.25);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(110, 231, 183, 0.14), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 28px 20px 64px; }
+    .topnav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text); font-weight: 600; text-decoration: none;
+    }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 700; font-size: 14px;
+      box-shadow: 0 0 24px var(--glow);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(110, 231, 183, 0.1);
+      border: 1px solid rgba(110, 231, 183, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 500;
+    }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      margin: 0 0 8px; letter-spacing: -0.03em;
+    }
+    .lead { color: var(--muted); margin: 0 0 24px; font-size: 1.05rem; }
+    .privacy {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 14px 16px; border-radius: 14px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      margin-bottom: 22px; color: #c7e9ff; font-size: 0.95rem;
+    }
+    .privacy strong { color: var(--accent2); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    #dropzone {
+      border: 1.5px dashed #3a4d72;
+      border-radius: 16px;
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .15s;
+      background: rgba(7, 11, 20, 0.45);
+      outline: none;
+    }
+    #dropzone:hover, #dropzone:focus-visible, #dropzone.is-dragover {
+      border-color: var(--accent);
+      background: rgba(110, 231, 183, 0.06);
+      box-shadow: inset 0 0 0 1px rgba(110, 231, 183, 0.2);
+    }
+    #dropzone .icon { font-size: 2rem; margin-bottom: 8px; }
+    #dropzone p { margin: 0; color: var(--muted); }
+    #dropzone strong { color: var(--text); }
+    #fileInput { display: none; }
+    #fileMeta {
+      margin-top: 14px; padding: 12px 14px; border-radius: 12px;
+      background: var(--bg2); border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    #fileMeta span { color: var(--muted); font-size: 0.9rem; font-family: "JetBrains Mono", monospace; }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: end;
+      margin-top: 18px;
+    }
+    label.field {
+      display: flex; flex-direction: column; gap: 6px;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    select {
+      appearance: none;
+      background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2393a0bd' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 36px 12px 14px;
+      font: inherit; min-width: 160px;
+    }
+    button, .btn {
+      appearance: none; border: none; cursor: pointer;
+      font: inherit; font-weight: 600;
+      border-radius: 12px; padding: 12px 18px;
+      transition: transform .12s, opacity .12s, box-shadow .12s;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    #browseBtn {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); margin-top: 12px;
+    }
+    #browseBtn:hover { border-color: var(--accent2); }
+    #convertBtn {
+      background: linear-gradient(135deg, var(--accent), #34d399);
+      color: #042016;
+      box-shadow: 0 8px 28px var(--glow);
+      margin-left: auto;
+    }
+    #convertBtn:hover:not(:disabled) { transform: translateY(-1px); }
+    #progressWrap { margin-top: 18px; }
+    .bar {
+      height: 10px; border-radius: 999px; background: #1a2438; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    #progressBar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      transition: width .2s ease;
+    }
+    .prog-row {
+      display: flex; justify-content: space-between; margin-bottom: 6px;
+      font-size: 0.85rem; color: var(--muted); font-family: "JetBrains Mono", monospace;
+    }
+    .status { margin-top: 14px; min-height: 1.4em; color: var(--muted); font-size: 0.95rem; }
+    .status--ok { color: var(--accent); }
+    .status--error { color: var(--danger); }
+    #downloadLink {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 16px; padding: 12px 18px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px; color: #dff4ff; font-weight: 600;
+      text-decoration: none;
+    }
+    #downloadLink:hover { background: rgba(56, 189, 248, 0.2); text-decoration: none; }
+    #preview {
+      width: 100%; max-height: 220px; margin-top: 16px;
+      border-radius: 12px; background: #000; border: 1px solid var(--border);
+    }
+    .foot {
+      margin-top: 28px; color: var(--muted); font-size: 0.85rem;
+      display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between;
+    }
+    .credit code { font-family: "JetBrains Mono", monospace; font-size: 0.8rem; color: #b8c4e0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav">
+      <a class="brand" href="../../index.html">
+        <span class="logo">AT</span>
+        <span>Herramientas diarias</span>
+      </a>
+      <span class="pill">Día 01 · 9 nov 2026</span>
+    </div>
+
+    <h1>Video a MP3</h1>
+    <p class="lead">Elige un video o audio de tu equipo y descarga el audio en MP3. Sin servidor, sin cuentas, sin subir nada.</p>
+
+    <div class="privacy" role="note">
+      <span aria-hidden="true">🔒</span>
+      <div>
+        <strong>Privacidad:</strong> tus archivos <em>nunca salen de tu dispositivo</em>.
+        La conversión ocurre 100% en el navegador con Web Audio API y el codificador MP3 lamejs.
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="dropzone" tabindex="0" role="button" aria-label="Seleccionar archivo de video o audio">
+        <div class="icon" aria-hidden="true">🎬 → 🎵</div>
+        <p><strong>Arrastra aquí tu archivo</strong> o haz clic para elegir</p>
+        <p style="margin-top:6px;font-size:0.9rem">mp4 · webm · mov · m4a · wav · ogg · aac…</p>
+        <button type="button" id="browseBtn">Elegir archivo</button>
+        <input id="fileInput" type="file" accept="video/*,audio/*,.mp4,.webm,.mov,.m4a,.mp3,.wav,.ogg,.aac,.mkv,.flac" />
+      </div>
+
+      <div id="fileMeta" hidden></div>
+      <video id="preview" controls hidden playsinline></video>
+
+      <div class="controls">
+        <label class="field">
+          Bitrate
+          <select id="bitRate" aria-label="Bitrate del MP3">
+            <option value="128">128 kbps</option>
+            <option value="192" selected>192 kbps</option>
+            <option value="320">320 kbps</option>
+          </select>
+        </label>
+        <button type="button" id="convertBtn" disabled>Convertir a MP3</button>
+      </div>
+
+      <div id="progressWrap" hidden>
+        <div class="prog-row"><span>Progreso</span><span id="progressLabel">0%</span></div>
+        <div class="bar"><div id="progressBar"></div></div>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+      <a id="downloadLink" hidden href="#">Descargar MP3</a>
+    </div>
+
+    <div class="foot">
+      <span>Parte de <a href="../../index.html">Herramientas diarias · Andrey Tech</a></span>
+      <span class="credit">MP3 via <code>lamejs</code> (LGPL) · <a href="https://lame.sourceforge.io/" rel="noopener" target="_blank">lame.sourceforge.io</a></span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

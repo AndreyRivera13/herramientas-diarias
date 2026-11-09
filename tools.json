@@ -1,0 +1,10 @@
+[
+  {
+    "day": 1,
+    "date": "2026-11-09",
+    "slug": "video-a-mp3",
+    "name": "Video a MP3",
+    "description": "Extrae el audio de un video o archivo de sonido y descárgalo en MP3. Todo ocurre en tu navegador.",
+    "path": "tools/01-video-a-mp3/"
+  }
+]

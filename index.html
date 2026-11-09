@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Herramientas diarias · Andrey Tech</title>
+  <meta name="description" content="Una herramienta web nueva cada día. Gratuitas, privadas y 100% en tu navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --glow: rgba(110, 231, 183, 0.22);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text);
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      background:
+        radial-gradient(1100px 520px at 8% -5%, rgba(56,189,248,.2), transparent 60%),
+        radial-gradient(900px 480px at 95% 5%, rgba(110,231,183,.16), transparent 55%),
+        radial-gradient(700px 400px at 50% 100%, rgba(167,139,250,.1), transparent 50%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 36px 20px 72px; }
+    header {
+      display: grid; gap: 18px;
+      margin-bottom: 36px;
+    }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 800;
+      box-shadow: 0 0 30px var(--glow); font-size: 15px;
+    }
+    .pill {
+      padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
+      background: rgba(110,231,183,.1); border: 1px solid rgba(110,231,183,.35); color: var(--accent);
+    }
+    .pill.alt {
+      background: rgba(56,189,248,.1); border-color: rgba(56,189,248,.35); color: var(--accent2);
+    }
+    h1 {
+      margin: 0; font-size: clamp(2.1rem, 5vw, 3.2rem);
+      letter-spacing: -0.04em; line-height: 1.1;
+    }
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { margin: 0; max-width: 620px; color: var(--muted); font-size: 1.1rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      position: relative;
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 45%), var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: transform .15s, border-color .15s, box-shadow .15s;
+      min-height: 190px;
+      overflow: hidden;
+    }
+    .card::before {
+      content: ""; position: absolute; inset: auto -20% -40% auto;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(110,231,183,.18), transparent 70%);
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(110,231,183,.45);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(110,231,183,.12);
+    }
+    .day {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .card h2 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
+    .card p { margin: 0; color: var(--muted); flex: 1; font-size: 0.98rem; }
+    .card .cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 6px; font-weight: 600; color: var(--accent);
+      font-size: 0.95rem;
+    }
+    .empty {
+      grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px;
+      border: 1px dashed var(--border); border-radius: var(--radius);
+    }
+    footer {
+      margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 10px 20px; justify-content: space-between;
+      color: var(--muted); font-size: 0.9rem;
+    }
+    footer a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge-row">
+        <div class="logo" aria-hidden="true">AT</div>
+        <span class="pill">Andrey Tech</span>
+        <span class="pill alt">100% en el navegador</span>
+      </div>
+      <h1>Herramientas <span>diarias</span></h1>
+      <p class="lead">
+        Una herramienta nueva cada día para desarrolladores y para el día a día.
+        Privadas, rápidas y sin subir tus archivos a ningún servidor.
+      </p>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite">
+        <div class="empty">Cargando herramientas…</div>
+      </div>
+    </main>
+
+    <footer>
+      <span>Hecho por <a href="https://github.com/AndreyRivera13" rel="noopener" target="_blank">Brayam Andrey Oliveros Rivera</a></span>
+      <span><a href="https://github.com/AndreyRivera13/herramientas-diarias" rel="noopener" target="_blank">Código en GitHub</a> · Ver <a href="BACKLOG.md">backlog</a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var grid = document.getElementById('grid');
+      function fmtDate(iso) {
+        try {
+          var d = new Date(iso + 'T12:00:00');
+          return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+        } catch (_) { return iso; }
+      }
+      function pad(n) { return String(n).padStart(2, '0'); }
+      fetch('tools.json')
+        .then(function (r) { return r.json(); })
+        .then(function (tools) {
+          if (!tools || !tools.length) {
+            grid.innerHTML = '<div class="empty">Pronto habrá herramientas aquí.</div>';
+            return;
+          }
+          tools = tools.slice().sort(function (a, b) { return b.day - a.day; });
+          grid.innerHTML = tools.map(function (t) {
+            var href = t.path || ('tools/' + pad(t.day) + '-' + t.slug + '/');
+            return (
+              '<a class="card" href="' + href + '">' +
+                '<div class="day">Día ' + pad(t.day) + ' · ' + fmtDate(t.date) + '</div>' +
+                '<h2>' + t.name + '</h2>' +
+                '<p>' + t.description + '</p>' +
+                '<span class="cta">Abrir herramienta →</span>' +
+              '</a>'
+            );
+          }).join('');
+        })
+        .catch(function () {
+          grid.innerHTML = '<div class="empty">No se pudo cargar el catálogo.</div>';
+        });
+    })();
+  </script>
+</body>
+</html>
