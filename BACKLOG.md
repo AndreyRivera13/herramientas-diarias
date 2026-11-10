@@ -3,7 +3,7 @@
 Lista ordenada de ideas. Todas deben ser **100% en el navegador** y legales
 (sin descargar ni rippear contenido de servicios de terceros).
 
-1. Compresor de imágenes (JPEG/PNG/WebP, control de calidad)
+1. ~~Compresor de imágenes (JPEG/PNG/WebP, control de calidad)~~ ✅ Día 02 (2026-11-10)
 2. Convertidor de formatos de imagen (PNG ↔ JPEG ↔ WebP ↔ BMP)
 3. Generador de códigos QR (texto, URL, Wi‑Fi)
 4. Formateador y validador de JSON

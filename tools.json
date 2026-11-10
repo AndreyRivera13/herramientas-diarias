@@ -6,5 +6,13 @@
     "name": "Video a MP3",
     "description": "Extrae el audio de un video o archivo de sonido y descárgalo en MP3. Todo ocurre en tu navegador.",
     "path": "tools/01-video-a-mp3/"
+  },
+  {
+    "day": 2,
+    "date": "2026-11-10",
+    "slug": "compresor-de-imagenes",
+    "name": "Compresor de imágenes",
+    "description": "Reduce el peso de tus fotos JPEG, PNG o WebP con control de calidad y ancho máximo. Todo ocurre en tu navegador.",
+    "path": "tools/02-compresor-de-imagenes/"
   }
 ]

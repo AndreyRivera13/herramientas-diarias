@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Día 02 · Compresor de imágenes — Herramientas diarias</title>
+  <meta name="description" content="Comprime imágenes JPEG, PNG y WebP en tu navegador con control de calidad y tamaño. Tus fotos nunca salen de tu dispositivo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1424;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --danger: #fb7185;
+      --warn: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.25);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(110, 231, 183, 0.14), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 64px; }
+    .topnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 700; font-size: 14px;
+      box-shadow: 0 0 24px var(--glow);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+      background: rgba(110, 231, 183, 0.1); border: 1px solid rgba(110, 231, 183, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 500;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0 0 8px; letter-spacing: -0.03em; }
+    .lead { color: var(--muted); margin: 0 0 24px; font-size: 1.05rem; }
+    .privacy {
+      display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 14px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.28);
+      margin-bottom: 22px; color: #c7e9ff; font-size: 0.95rem;
+    }
+    .privacy strong { color: var(--accent2); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    #dropzone {
+      border: 1.5px dashed #3a4d72; border-radius: 16px; padding: 36px 20px; text-align: center;
+      cursor: pointer; transition: border-color .15s, background .15s; background: rgba(7, 11, 20, 0.45); outline: none;
+    }
+    #dropzone:hover, #dropzone:focus-visible, #dropzone.is-dragover {
+      border-color: var(--accent); background: rgba(110, 231, 183, 0.06);
+      box-shadow: inset 0 0 0 1px rgba(110, 231, 183, 0.2);
+    }
+    #dropzone .icon { font-size: 2rem; margin-bottom: 8px; }
+    #dropzone p { margin: 0; color: var(--muted); }
+    #dropzone strong { color: var(--text); }
+    #fileInput { display: none; }
+    .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; margin-top: 18px; }
+    label.field { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+    select, input[type="number"] {
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; font: inherit;
+    }
+    select {
+      appearance: none; min-width: 150px; padding-right: 36px;
+      background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2393a0bd' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    }
+    input[type="number"] { width: 140px; }
+    .range-field { min-width: 200px; flex: 1; }
+    .range-field .val { font-family: "JetBrains Mono", monospace; color: var(--accent); }
+    input[type="range"] { width: 100%; accent-color: var(--accent); height: 44px; }
+    input[type="range"]:disabled { opacity: .4; }
+    button, .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 600;
+      border-radius: 12px; padding: 12px 18px; transition: transform .12s, opacity .12s, box-shadow .12s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    #browseBtn { background: transparent; color: var(--text); border: 1px solid var(--border); margin-top: 12px; }
+    #browseBtn:hover { border-color: var(--accent2); }
+    .primary { background: linear-gradient(135deg, var(--accent), #34d399); color: #042016; box-shadow: 0 8px 28px var(--glow); }
+    .primary:hover:not(:disabled) { transform: translateY(-1px); }
+    .ghost { background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #dff4ff; }
+    .ghost:hover:not(:disabled) { background: rgba(56, 189, 248, 0.2); text-decoration: none; }
+    .subtle { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .actions .primary { margin-left: auto; }
+    .status { margin-top: 14px; min-height: 1.4em; color: var(--muted); font-size: 0.95rem; }
+    .status--ok { color: var(--accent); }
+    .status--error { color: var(--danger); }
+    .summary {
+      margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: var(--bg2);
+      border: 1px solid var(--border); font-family: "JetBrains Mono", monospace; font-size: 0.88rem; color: var(--muted);
+    }
+    .summary b { color: var(--accent); font-weight: 500; }
+    #list { display: grid; gap: 14px; margin-top: 18px; }
+    .item {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px;
+      border-radius: 14px; background: var(--bg2); border: 1px solid var(--border);
+    }
+    .item .head { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .item .name { font-weight: 600; word-break: break-all; }
+    .item figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+    .item figcaption { font-family: "JetBrains Mono", monospace; font-size: 0.8rem; color: var(--muted); }
+    .item img {
+      width: 100%; height: 180px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border);
+      background: repeating-conic-gradient(#1a2438 0% 25%, #121a2b 0% 50%) 50% / 18px 18px;
+    }
+    .saved { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; }
+    .saved.good { color: var(--accent); background: rgba(110,231,183,.1); border: 1px solid rgba(110,231,183,.35); }
+    .saved.bad { color: var(--warn); background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.35); }
+    .item .dl { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .item .note { color: var(--muted); font-size: 0.85rem; }
+    @media (max-width: 560px) { .item { grid-template-columns: 1fr; } }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav">
+      <a class="brand" href="../../index.html">
+        <span class="logo">AT</span>
+        <span>Herramientas diarias</span>
+      </a>
+      <span class="pill">Día 02 · 10 nov 2026</span>
+    </div>
+
+    <h1>Compresor de imágenes</h1>
+    <p class="lead">Reduce el peso de tus fotos JPEG, PNG o WebP eligiendo formato, calidad y ancho máximo. Compara el antes y el después y descarga el resultado.</p>
+
+    <div class="privacy" role="note">
+      <span aria-hidden="true">🔒</span>
+      <div>
+        <strong>Privacidad:</strong> tus imágenes <em>nunca salen de tu dispositivo</em>.
+        La compresión ocurre 100% en el navegador usando Canvas.
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="dropzone" tabindex="0" role="button" aria-label="Seleccionar imágenes">
+        <div class="icon" aria-hidden="true">🖼️ → 🗜️</div>
+        <p><strong>Arrastra aquí tus imágenes</strong> o haz clic para elegir</p>
+        <p style="margin-top:6px;font-size:0.9rem">jpg · png · webp · gif · bmp — una o varias a la vez</p>
+        <button type="button" id="browseBtn">Elegir imágenes</button>
+        <input id="fileInput" type="file" accept="image/*" multiple />
+      </div>
+
+      <div class="controls">
+        <label class="field">
+          Formato de salida
+          <select id="format" aria-label="Formato de salida">
+            <option value="image/jpeg" selected>JPEG</option>
+            <option value="image/webp">WebP</option>
+            <option value="image/png">PNG (sin pérdida)</option>
+          </select>
+        </label>
+        <label class="field range-field">
+          <span>Calidad: <span class="val" id="qualityVal">75</span></span>
+          <input id="quality" type="range" min="10" max="100" step="1" value="75" aria-label="Calidad" />
+        </label>
+        <label class="field">
+          Ancho máximo (px, opcional)
+          <input id="maxWidth" type="number" min="16" step="1" placeholder="Original" aria-label="Ancho máximo en píxeles" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="clearBtn" class="subtle" disabled>Limpiar</button>
+        <button type="button" id="zipBtn" class="ghost" disabled>⬇ Descargar todo (.zip)</button>
+        <button type="button" id="compressBtn" class="primary" disabled>Comprimir</button>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+      <div id="summary" class="summary" hidden></div>
+      <div id="list"></div>
+    </div>
+
+    <div class="foot">
+      <span>Parte de <a href="../../index.html">Herramientas diarias · Andrey Tech</a></span>
+      <span>Sin librerías externas · Canvas <code>toBlob</code></span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
