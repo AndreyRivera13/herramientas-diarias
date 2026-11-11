@@ -4,7 +4,7 @@ Lista ordenada de ideas. Todas deben ser **100% en el navegador** y legales
 (sin descargar ni rippear contenido de servicios de terceros).
 
 1. ~~Compresor de imágenes (JPEG/PNG/WebP, control de calidad)~~ ✅ Día 02 (2026-11-10)
-2. Convertidor de formatos de imagen (PNG ↔ JPEG ↔ WebP ↔ BMP)
+2. ~~Convertidor de formatos de imagen (PNG ↔ JPEG ↔ WebP ↔ BMP)~~ ✅ Día 03 (2026-11-11)
 3. Generador de códigos QR (texto, URL, Wi‑Fi)
 4. Formateador y validador de JSON
 5. Codificador / decodificador Base64 (texto y archivos)

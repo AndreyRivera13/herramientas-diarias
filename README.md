@@ -8,6 +8,7 @@ Todas corren **100% en el navegador**: tus archivos no se suben a ningún servid
 - Landing: https://andreyrivera13.github.io/herramientas-diarias/
 - Día 01 — Video a MP3: https://andreyrivera13.github.io/herramientas-diarias/tools/01-video-a-mp3/
 - Día 02 — Compresor de imágenes: https://andreyrivera13.github.io/herramientas-diarias/tools/02-compresor-de-imagenes/
+- Día 03 — Convertidor de formatos de imagen: https://andreyrivera13.github.io/herramientas-diarias/tools/03-convertidor-de-imagenes/
 
 ## Estructura
 

@@ -14,5 +14,13 @@
     "name": "Compresor de imágenes",
     "description": "Reduce el peso de tus fotos JPEG, PNG o WebP con control de calidad y ancho máximo. Todo ocurre en tu navegador.",
     "path": "tools/02-compresor-de-imagenes/"
+  },
+  {
+    "day": 3,
+    "date": "2026-11-11",
+    "slug": "convertidor-de-imagenes",
+    "name": "Convertidor de formatos de imagen",
+    "description": "Convierte imágenes entre PNG, JPEG, WebP y BMP, con fondo para la transparencia y descarga en ZIP. Todo ocurre en tu navegador.",
+    "path": "tools/03-convertidor-de-imagenes/"
   }
 ]
