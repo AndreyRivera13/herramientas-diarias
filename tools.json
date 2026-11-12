@@ -22,5 +22,13 @@
     "name": "Convertidor de formatos de imagen",
     "description": "Convierte imágenes entre PNG, JPEG, WebP y BMP, con fondo para la transparencia y descarga en ZIP. Todo ocurre en tu navegador.",
     "path": "tools/03-convertidor-de-imagenes/"
+  },
+  {
+    "day": 4,
+    "date": "2026-11-12",
+    "slug": "generador-de-qr",
+    "name": "Generador de códigos QR",
+    "description": "Crea códigos QR para enlaces, texto, redes Wi‑Fi, correos, teléfonos y WhatsApp, con colores personalizados y descarga en PNG o SVG. Todo ocurre en tu navegador.",
+    "path": "tools/04-generador-de-qr/"
   }
 ]

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Día 04 · Generador de códigos QR — Herramientas diarias</title>
+  <meta name="description" content="Crea códigos QR para texto, enlaces, redes Wi‑Fi, correos y teléfonos. Descárgalos en PNG o SVG. Todo ocurre en tu navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1424;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --danger: #fb7185;
+      --warn: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.25);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(110, 231, 183, 0.14), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 64px; }
+    .topnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 700; font-size: 14px;
+      box-shadow: 0 0 24px var(--glow);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+      background: rgba(110, 231, 183, 0.1); border: 1px solid rgba(110, 231, 183, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 500;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0 0 8px; letter-spacing: -0.03em; }
+    .lead { color: var(--muted); margin: 0 0 24px; font-size: 1.05rem; }
+    .privacy {
+      display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 14px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.28);
+      margin-bottom: 22px; color: #c7e9ff; font-size: 0.95rem;
+    }
+    .privacy strong { color: var(--accent2); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .tab {
+      appearance: none; cursor: pointer; font: inherit; font-weight: 600; font-size: 0.92rem;
+      padding: 9px 14px; border-radius: 999px; background: var(--bg2); color: var(--muted);
+      border: 1px solid var(--border); transition: border-color .12s, color .12s, background .12s;
+    }
+    .tab:hover { border-color: var(--accent2); color: var(--text); }
+    .tab[aria-selected="true"] { background: rgba(110,231,183,.12); border-color: rgba(110,231,183,.5); color: var(--accent); }
+    .layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+    .panel[hidden] { display: none; }
+    .fields { display: grid; gap: 14px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+    label.field { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+    label.check { display: flex; gap: 8px; align-items: center; font-size: 0.92rem; color: var(--muted); cursor: pointer; }
+    label.check input { accent-color: var(--accent); width: 18px; height: 18px; }
+    input[type="text"], input[type="url"], input[type="email"], input[type="tel"], input[type="password"], input[type="number"], textarea, select {
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; font: inherit; width: 100%;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+    select {
+      appearance: none; padding-right: 36px;
+      background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2393a0bd' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    }
+    .pw { position: relative; }
+    .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px 10px; font-size: 0.8rem; }
+    .options { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); display: grid; gap: 14px; }
+    .options h3 { margin: 0; font-size: 0.95rem; color: var(--text); }
+    .range-field .val { font-family: "JetBrains Mono", monospace; color: var(--accent); }
+    input[type="range"] { width: 100%; accent-color: var(--accent); height: 34px; }
+    input[type="color"] { width: 100%; height: 46px; padding: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; }
+    button, .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 600;
+      border-radius: 12px; padding: 12px 18px; transition: transform .12s, opacity .12s, box-shadow .12s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .primary { background: linear-gradient(135deg, var(--accent), #34d399); color: #042016; box-shadow: 0 8px 28px var(--glow); }
+    .primary:hover:not(:disabled) { transform: translateY(-1px); }
+    .ghost { background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #dff4ff; }
+    .ghost:hover:not(:disabled) { background: rgba(56, 189, 248, 0.2); }
+    .subtle { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .preview { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+    .qrbox {
+      aspect-ratio: 1 / 1; width: 100%; border-radius: 16px; border: 1px solid var(--border);
+      background: repeating-conic-gradient(#1a2438 0% 25%, #121a2b 0% 50%) 50% / 18px 18px;
+      display: grid; place-items: center; padding: 14px; overflow: hidden;
+    }
+    .qrbox canvas { width: 100%; height: auto; max-width: 100%; image-rendering: pixelated; border-radius: 6px; }
+    .qrbox .placeholder { color: var(--muted); text-align: center; font-size: 0.95rem; padding: 20px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .actions .wide { grid-column: 1 / -1; }
+    .status { min-height: 1.4em; color: var(--muted); font-size: 0.9rem; margin: 0; }
+    .status--ok { color: var(--accent); }
+    .status--warn { color: var(--warn); }
+    .status--error { color: var(--danger); }
+    .summary {
+      padding: 12px 14px; border-radius: 12px; background: var(--bg2);
+      border: 1px solid var(--border); font-family: "JetBrains Mono", monospace; font-size: 0.8rem; color: var(--muted);
+      word-break: break-all; max-height: 120px; overflow: auto; white-space: pre-wrap;
+    }
+    .summary b { color: var(--accent); font-weight: 500; }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav">
+      <a class="brand" href="../../index.html">
+        <span class="logo">AT</span>
+        <span>Herramientas diarias</span>
+      </a>
+      <span class="pill">Día 04 · 12 nov 2026</span>
+    </div>
+
+    <h1>Generador de códigos QR</h1>
+    <p class="lead">Crea un código QR para un texto, un enlace, tu red Wi‑Fi, un correo o un número de teléfono. Personaliza colores, tamaño y corrección de errores, y descárgalo en PNG o SVG.</p>
+
+    <div class="privacy" role="note">
+      <span aria-hidden="true">🔒</span>
+      <div>
+        <strong>Privacidad:</strong> lo que escribes (incluida la contraseña del Wi‑Fi) <em>nunca sale de tu dispositivo</em>.
+        El código se genera 100% en el navegador.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs" role="tablist" aria-label="Tipo de contenido">
+        <button type="button" class="tab" role="tab" data-type="url" aria-selected="true">🔗 Enlace</button>
+        <button type="button" class="tab" role="tab" data-type="text" aria-selected="false">📝 Texto</button>
+        <button type="button" class="tab" role="tab" data-type="wifi" aria-selected="false">📶 Wi‑Fi</button>
+        <button type="button" class="tab" role="tab" data-type="email" aria-selected="false">✉️ Correo</button>
+        <button type="button" class="tab" role="tab" data-type="tel" aria-selected="false">📞 Teléfono / SMS</button>
+      </div>
+
+      <div class="layout">
+        <div>
+          <div class="panel fields" data-panel="url">
+            <label class="field">Dirección web
+              <input id="url" type="url" inputmode="url" placeholder="https://ejemplo.com" value="https://andreyrivera13.github.io/herramientas-diarias/" />
+            </label>
+          </div>
+
+          <div class="panel fields" data-panel="text" hidden>
+            <label class="field">Texto libre
+              <textarea id="text" placeholder="Escribe cualquier texto, con tildes y emojis si quieres ✨"></textarea>
+            </label>
+          </div>
+
+          <div class="panel fields" data-panel="wifi" hidden>
+            <label class="field">Nombre de la red (SSID)
+              <input id="ssid" type="text" autocomplete="off" placeholder="MiCasa_5G" />
+            </label>
+            <div class="row">
+              <label class="field">Seguridad
+                <select id="security">
+                  <option value="WPA" selected>WPA / WPA2 / WPA3</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">Sin contraseña</option>
+                </select>
+              </label>
+              <label class="field">Contraseña
+                <span class="pw">
+                  <input id="wifiPass" type="password" autocomplete="off" placeholder="••••••••" />
+                  <button type="button" id="togglePw" class="subtle" aria-label="Mostrar contraseña">Ver</button>
+                </span>
+              </label>
+            </div>
+            <label class="check"><input id="hidden" type="checkbox" /> Red oculta</label>
+          </div>
+
+          <div class="panel fields" data-panel="email" hidden>
+            <label class="field">Para
+              <input id="mailTo" type="email" placeholder="hola@ejemplo.com" />
+            </label>
+            <label class="field">Asunto (opcional)
+              <input id="mailSubject" type="text" placeholder="Consulta" />
+            </label>
+            <label class="field">Mensaje (opcional)
+              <textarea id="mailBody" placeholder="Hola, quería preguntar…"></textarea>
+            </label>
+          </div>
+
+          <div class="panel fields" data-panel="tel" hidden>
+            <div class="row">
+              <label class="field">Acción
+                <select id="telMode">
+                  <option value="tel" selected>Llamar</option>
+                  <option value="sms">Enviar SMS</option>
+                  <option value="wa">Abrir WhatsApp</option>
+                </select>
+              </label>
+              <label class="field">Número (con indicativo)
+                <input id="telNum" type="tel" placeholder="+57 300 123 4567" />
+              </label>
+            </div>
+            <label class="field" id="telMsgField" hidden>Mensaje (opcional)
+              <textarea id="telMsg" placeholder="Hola 👋"></textarea>
+            </label>
+          </div>
+
+          <div class="options">
+            <h3>Apariencia</h3>
+            <div class="row">
+              <label class="field">Color del código
+                <input id="fg" type="color" value="#0b1220" />
+              </label>
+              <label class="field">Color de fondo
+                <input id="bg" type="color" value="#ffffff" />
+              </label>
+            </div>
+            <div class="row">
+              <label class="field">Corrección de errores
+                <select id="ecl">
+                  <option value="L">L · 7 % (más compacto)</option>
+                  <option value="M" selected>M · 15 % (recomendado)</option>
+                  <option value="Q">Q · 25 %</option>
+                  <option value="H">H · 30 % (más robusto)</option>
+                </select>
+              </label>
+              <label class="field">Tamaño PNG
+                <select id="size">
+                  <option value="256">256 px</option>
+                  <option value="512" selected>512 px</option>
+                  <option value="1024">1024 px</option>
+                  <option value="2048">2048 px (impresión)</option>
+                </select>
+              </label>
+            </div>
+            <label class="field range-field">
+              <span>Margen (módulos): <span class="val" id="marginVal">4</span></span>
+              <input id="margin" type="range" min="0" max="10" step="1" value="4" aria-label="Margen en módulos" />
+            </label>
+          </div>
+        </div>
+
+        <div class="preview">
+          <div class="qrbox" id="qrbox"><div class="placeholder">Escribe algo para ver tu código QR</div></div>
+          <p id="status" class="status" aria-live="polite"></p>
+          <div class="actions">
+            <button type="button" id="pngBtn" class="primary" disabled>⬇ PNG</button>
+            <button type="button" id="svgBtn" class="ghost" disabled>⬇ SVG</button>
+            <button type="button" id="copyBtn" class="subtle wide" disabled>📋 Copiar imagen</button>
+          </div>
+          <div id="summary" class="summary" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Parte de <a href="../../index.html">Herramientas diarias · Andrey Tech</a></span>
+      <span>Usa <a href="vendor/LICENSE-qrcode-generator.txt">qrcode-generator</a> (MIT) incluido en el repo · «QR Code» es marca registrada de DENSO WAVE</span>
+    </div>
+  </div>
+  <script src="vendor/qrcode.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
