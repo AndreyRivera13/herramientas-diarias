@@ -10,6 +10,7 @@ Todas corren **100% en el navegador**: tus archivos no se suben a ningún servid
 - Día 02 — Compresor de imágenes: https://andreyrivera13.github.io/herramientas-diarias/tools/02-compresor-de-imagenes/
 - Día 03 — Convertidor de formatos de imagen: https://andreyrivera13.github.io/herramientas-diarias/tools/03-convertidor-de-imagenes/
 - Día 04 — Generador de códigos QR: https://andreyrivera13.github.io/herramientas-diarias/tools/04-generador-de-qr/
+- Día 05 — Formateador y validador de JSON: https://andreyrivera13.github.io/herramientas-diarias/tools/05-formateador-json/
 
 ## Estructura
 

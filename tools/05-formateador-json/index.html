@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Día 05 · Formateador y validador de JSON — Herramientas diarias</title>
+  <meta name="description" content="Valida, formatea, minifica y ordena JSON con mensajes de error que indican línea y columna. Todo ocurre en tu navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1424;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --danger: #fb7185;
+      --warn: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.25);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(110, 231, 183, 0.14), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 64px; }
+    .topnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 700; font-size: 14px;
+      box-shadow: 0 0 24px var(--glow);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+      background: rgba(110, 231, 183, 0.1); border: 1px solid rgba(110, 231, 183, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 500;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0 0 8px; letter-spacing: -0.03em; }
+    .lead { color: var(--muted); margin: 0 0 24px; font-size: 1.05rem; }
+    .privacy {
+      display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 14px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.28);
+      margin-bottom: 22px; color: #c7e9ff; font-size: 0.95rem;
+    }
+    .privacy strong { color: var(--accent2); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+    .pane { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .pane-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .pane-head h2 { margin: 0; font-size: 1rem; }
+    .meta { color: var(--muted); font-size: 0.8rem; font-family: "JetBrains Mono", monospace; }
+    textarea.code {
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; width: 100%; min-height: 360px; resize: vertical;
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85rem; line-height: 1.5;
+      tab-size: 4; white-space: pre; overflow: auto;
+    }
+    textarea.code:focus { outline: none; border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+    textarea.code.invalid { border-color: rgba(251,113,133,.6); }
+    textarea.code.valid { border-color: rgba(110,231,183,.5); }
+    .drop { position: relative; }
+    .drop.over textarea.code { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .toolbar .grow { flex: 1 1 auto; }
+    label.field { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+    label.check { display: flex; gap: 8px; align-items: center; font-size: 0.92rem; color: var(--muted); cursor: pointer; padding: 10px 0; }
+    label.check input { accent-color: var(--accent); width: 18px; height: 18px; }
+    select {
+      appearance: none; background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2393a0bd' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+      color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 11px 36px 11px 14px; font: inherit;
+    }
+    select:focus { outline: none; border-color: var(--accent2); }
+    button, .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 600;
+      border-radius: 12px; padding: 11px 16px; transition: transform .12s, opacity .12s, box-shadow .12s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .primary { background: linear-gradient(135deg, var(--accent), #34d399); color: #042016; box-shadow: 0 8px 28px var(--glow); }
+    .primary:hover:not(:disabled) { transform: translateY(-1px); }
+    .ghost { background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #dff4ff; }
+    .ghost:hover:not(:disabled) { background: rgba(56, 189, 248, 0.2); }
+    .subtle { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .subtle:hover:not(:disabled) { color: var(--text); border-color: var(--accent2); }
+    .small { padding: 7px 12px; font-size: 0.85rem; border-radius: 10px; }
+    .btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+    input[type="file"] { display: none; }
+    .status { min-height: 1.4em; color: var(--muted); font-size: 0.92rem; margin: 0; }
+    .status--ok { color: var(--accent); }
+    .status--warn { color: var(--warn); }
+    .status--error { color: var(--danger); }
+    .errbox {
+      border: 1px solid rgba(251,113,133,.45); background: rgba(251,113,133,.08); border-radius: 12px;
+      padding: 12px 14px; display: grid; gap: 8px;
+    }
+    .errbox[hidden] { display: none; }
+    .errbox .msg { color: #ffd1da; font-weight: 500; }
+    .errbox pre {
+      margin: 0; font-family: "JetBrains Mono", monospace; font-size: 0.8rem; color: var(--muted);
+      overflow: auto; white-space: pre; background: var(--bg2); border-radius: 8px; padding: 8px 10px;
+    }
+    .errbox pre .caret { color: var(--danger); font-weight: 700; }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav">
+      <a class="brand" href="../../index.html">
+        <span class="logo">AT</span>
+        <span>Herramientas diarias</span>
+      </a>
+      <span class="pill">Día 05 · 13 nov 2026</span>
+    </div>
+
+    <h1>Formateador y validador de JSON</h1>
+    <p class="lead">Pega tu JSON o abre un archivo .json para validarlo al instante. Si tiene errores, te decimos en qué línea y columna están; si es válido, puedes embellecerlo, minificarlo, ordenar sus claves, copiarlo o descargarlo.</p>
+
+    <div class="privacy" role="note">
+      <span aria-hidden="true">🔒</span>
+      <div>
+        <strong>Privacidad:</strong> tu JSON (con tokens, claves o datos personales) <em>nunca sale de tu dispositivo</em>.
+        Todo se procesa 100% en el navegador.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <label class="field">Sangría
+          <select id="indent">
+            <option value="2" selected>2 espacios</option>
+            <option value="4">4 espacios</option>
+            <option value="tab">Tabulación</option>
+          </select>
+        </label>
+        <label class="check"><input id="sortKeys" type="checkbox" /> Ordenar claves (A→Z)</label>
+        <span class="grow"></span>
+        <div class="btnrow">
+          <button type="button" id="formatBtn" class="primary">✨ Formatear</button>
+          <button type="button" id="minifyBtn" class="ghost">🗜️ Minificar</button>
+          <button type="button" id="validateBtn" class="subtle">✔ Validar</button>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="pane">
+          <div class="pane-head">
+            <h2>Entrada</h2>
+            <div class="btnrow">
+              <label class="btn subtle small" for="file">📂 Abrir .json</label>
+              <input id="file" type="file" accept=".json,application/json,text/plain" />
+              <button type="button" id="sampleBtn" class="subtle small">Ejemplo</button>
+              <button type="button" id="clearBtn" class="subtle small">Limpiar</button>
+            </div>
+          </div>
+          <div class="drop" id="drop">
+            <textarea id="input" class="code" spellcheck="false" autocomplete="off" autocapitalize="off"
+              aria-label="JSON de entrada" placeholder='Pega aquí tu JSON o arrastra un archivo .json&#10;&#10;{ "hola": "mundo" }'></textarea>
+          </div>
+          <div class="meta" id="inMeta">0 caracteres</div>
+        </div>
+
+        <div class="pane">
+          <div class="pane-head">
+            <h2>Resultado</h2>
+            <div class="btnrow">
+              <button type="button" id="copyBtn" class="subtle small" disabled>📋 Copiar</button>
+              <button type="button" id="downloadBtn" class="subtle small" disabled>⬇ Descargar .json</button>
+            </div>
+          </div>
+          <textarea id="output" class="code" spellcheck="false" readonly aria-label="JSON resultante"
+            placeholder="Aquí aparecerá el JSON formateado o minificado."></textarea>
+          <div class="meta" id="outMeta"></div>
+        </div>
+      </div>
+
+      <p id="status" class="status" aria-live="polite" style="margin-top:14px"></p>
+      <div id="errbox" class="errbox" role="alert" hidden>
+        <div class="msg" id="errMsg"></div>
+        <pre id="errSnippet"></pre>
+        <div><button type="button" id="gotoBtn" class="subtle small">Ir al error</button></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Parte de <a href="../../index.html">Herramientas diarias · Andrey Tech</a></span>
+      <span>JavaScript puro, sin librerías externas · Sin servidores</span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

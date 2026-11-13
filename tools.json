@@ -30,5 +30,13 @@
     "name": "Generador de códigos QR",
     "description": "Crea códigos QR para enlaces, texto, redes Wi‑Fi, correos, teléfonos y WhatsApp, con colores personalizados y descarga en PNG o SVG. Todo ocurre en tu navegador.",
     "path": "tools/04-generador-de-qr/"
+  },
+  {
+    "day": 5,
+    "date": "2026-11-13",
+    "slug": "formateador-json",
+    "name": "Formateador y validador de JSON",
+    "description": "Valida tu JSON con errores que indican línea y columna, y formatéalo, minifícalo u ordena sus claves para copiarlo o descargarlo. Todo ocurre en tu navegador.",
+    "path": "tools/05-formateador-json/"
   }
 ]
