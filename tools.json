@@ -38,5 +38,13 @@
     "name": "Formateador y validador de JSON",
     "description": "Valida tu JSON con errores que indican línea y columna, y formatéalo, minifícalo u ordena sus claves para copiarlo o descargarlo. Todo ocurre en tu navegador.",
     "path": "tools/05-formateador-json/"
+  },
+  {
+    "day": 6,
+    "date": "2026-11-14",
+    "slug": "base64",
+    "name": "Codificador y decodificador Base64",
+    "description": "Codifica y decodifica Base64 con soporte UTF‑8 y variante URL‑safe, convierte archivos a Base64 o Data URI y reconstruye archivos desde Base64. Todo ocurre en tu navegador.",
+    "path": "tools/06-base64/"
   }
 ]

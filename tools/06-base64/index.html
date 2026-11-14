@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Día 06 · Codificador y decodificador Base64 — Herramientas diarias</title>
+  <meta name="description" content="Codifica y decodifica Base64 (texto UTF‑8, variante URL‑safe y archivos o Data URI). Todo ocurre en tu navegador." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg2: #0d1424;
+      --card: #121a2b;
+      --border: #243049;
+      --text: #e8eefc;
+      --muted: #93a0bd;
+      --accent: #6ee7b7;
+      --accent2: #38bdf8;
+      --danger: #fb7185;
+      --warn: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.25);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(110, 231, 183, 0.14), transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 64px; }
+    .topnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; }
+    .brand:hover { text-decoration: none; }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; color: #041018; font-weight: 700; font-size: 14px;
+      box-shadow: 0 0 24px var(--glow);
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+      background: rgba(110, 231, 183, 0.1); border: 1px solid rgba(110, 231, 183, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 500;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0 0 8px; letter-spacing: -0.03em; }
+    .lead { color: var(--muted); margin: 0 0 24px; font-size: 1.05rem; }
+    .privacy {
+      display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 14px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.28);
+      margin-bottom: 22px; color: #c7e9ff; font-size: 0.95rem;
+    }
+    .privacy strong { color: var(--accent2); }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+    .pane { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .pane-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .pane-head h2 { margin: 0; font-size: 1rem; }
+    .meta { color: var(--muted); font-size: 0.8rem; font-family: "JetBrains Mono", monospace; }
+    textarea.code {
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; width: 100%; min-height: 360px; resize: vertical;
+      font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.85rem; line-height: 1.5;
+      tab-size: 4; white-space: pre; overflow: auto;
+    }
+    textarea.code:focus { outline: none; border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+    textarea.code.invalid { border-color: rgba(251,113,133,.6); }
+    textarea.code.valid { border-color: rgba(110,231,183,.5); }
+    .drop { position: relative; }
+    .drop.over textarea.code { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .toolbar .grow { flex: 1 1 auto; }
+    label.field { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+    label.check { display: flex; gap: 8px; align-items: center; font-size: 0.92rem; color: var(--muted); cursor: pointer; padding: 10px 0; }
+    label.check input { accent-color: var(--accent); width: 18px; height: 18px; }
+    select {
+      appearance: none; background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2393a0bd' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E") no-repeat right 12px center;
+      color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 11px 36px 11px 14px; font: inherit;
+    }
+    select:focus { outline: none; border-color: var(--accent2); }
+    button, .btn {
+      appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 600;
+      border-radius: 12px; padding: 11px 16px; transition: transform .12s, opacity .12s, box-shadow .12s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .primary { background: linear-gradient(135deg, var(--accent), #34d399); color: #042016; box-shadow: 0 8px 28px var(--glow); }
+    .primary:hover:not(:disabled) { transform: translateY(-1px); }
+    .ghost { background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: #dff4ff; }
+    .ghost:hover:not(:disabled) { background: rgba(56, 189, 248, 0.2); }
+    .subtle { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .subtle:hover:not(:disabled) { color: var(--text); border-color: var(--accent2); }
+    .small { padding: 7px 12px; font-size: 0.85rem; border-radius: 10px; }
+    .btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+    input[type="file"] { display: none; }
+    .status { min-height: 1.4em; color: var(--muted); font-size: 0.92rem; margin: 0; }
+    .status--ok { color: var(--accent); }
+    .status--warn { color: var(--warn); }
+    .status--error { color: var(--danger); }
+    .errbox {
+      border: 1px solid rgba(251,113,133,.45); background: rgba(251,113,133,.08); border-radius: 12px;
+      padding: 12px 14px; display: grid; gap: 8px;
+    }
+    .errbox[hidden] { display: none; }
+    .errbox .msg { color: #ffd1da; font-weight: 500; }
+    .errbox pre {
+      margin: 0; font-family: "JetBrains Mono", monospace; font-size: 0.8rem; color: var(--muted);
+      overflow: auto; white-space: pre; background: var(--bg2); border-radius: 8px; padding: 8px 10px;
+    }
+    .errbox pre .caret { color: var(--danger); font-weight: 700; }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .tab { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .tab[aria-selected="true"] { color: #042016; background: linear-gradient(135deg, var(--accent), #34d399); border-color: transparent; box-shadow: 0 8px 28px var(--glow); }
+    .panel[hidden] { display: none; }
+    textarea.code { min-height: 260px; white-space: pre-wrap; word-break: break-all; }
+    .dropzone {
+      border: 2px dashed var(--border); border-radius: 14px; padding: 28px 16px; text-align: center;
+      color: var(--muted); cursor: pointer; background: var(--bg2); transition: border-color .15s, box-shadow .15s;
+    }
+    .dropzone.over, .dropzone:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+    .fileinfo { font-family: "JetBrains Mono", monospace; font-size: 0.82rem; color: var(--muted); word-break: break-all; }
+    .preview { align-self: flex-start; object-fit: contain; max-width: 100%; max-height: 240px; border-radius: 12px; border: 1px solid var(--border); background: repeating-conic-gradient(#1a2338 0 25%, #121a2b 0 50%) 50% / 20px 20px; }
+    .preview[hidden] { display: none; }
+    input[type="text"].txt {
+      background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 12px;
+      padding: 11px 14px; font: inherit; min-width: 200px;
+    }
+    input[type="text"].txt:focus { outline: none; border-color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnav">
+      <a class="brand" href="../../index.html">
+        <span class="logo">AT</span>
+        <span>Herramientas diarias</span>
+      </a>
+      <span class="pill">Día 06 · 14 nov 2026</span>
+    </div>
+
+    <h1>Codificador y decodificador Base64</h1>
+    <p class="lead">Convierte texto a Base64 y de vuelta con soporte completo de UTF‑8 (tildes, ñ y emojis), usa la variante URL‑safe para JWT y URLs, o convierte archivos a Base64 / Data URI y reconstruye archivos a partir de Base64.</p>
+
+    <div class="privacy" role="note">
+      <span aria-hidden="true">🔒</span>
+      <div>
+        <strong>Privacidad:</strong> tus textos y archivos <em>nunca salen de tu dispositivo</em>.
+        Todo se procesa 100% en el navegador.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" role="tab" id="tabText" aria-selected="true" aria-controls="panelText">🔤 Texto</button>
+        <button type="button" class="tab" role="tab" id="tabFile" aria-selected="false" aria-controls="panelFile">📁 Archivos</button>
+      </div>
+
+      <!-- Texto -->
+      <section id="panelText" class="panel" role="tabpanel" aria-labelledby="tabText">
+        <div class="toolbar">
+          <label class="check"><input id="urlSafe" type="checkbox" /> URL‑safe (- y _ en lugar de + y /)</label>
+          <label class="check"><input id="noPad" type="checkbox" /> Sin relleno (=)</label>
+          <label class="check"><input id="wrap76" type="checkbox" /> Cortar líneas a 76 (MIME)</label>
+          <label class="check"><input id="live" type="checkbox" checked /> En vivo</label>
+          <span class="grow"></span>
+          <div class="btnrow">
+            <button type="button" id="encodeBtn" class="primary">🔒 Codificar</button>
+            <button type="button" id="decodeBtn" class="ghost">🔓 Decodificar</button>
+            <button type="button" id="swapBtn" class="subtle">⇅ Intercambiar</button>
+          </div>
+        </div>
+
+        <div class="layout">
+          <div class="pane">
+            <div class="pane-head">
+              <h2>Texto plano</h2>
+              <div class="btnrow">
+                <button type="button" id="sampleBtn" class="subtle small">Ejemplo</button>
+                <button type="button" id="clearBtn" class="subtle small">Limpiar</button>
+                <button type="button" id="copyPlain" class="subtle small">📋 Copiar</button>
+              </div>
+            </div>
+            <textarea id="plain" class="code" spellcheck="false" autocomplete="off" aria-label="Texto plano"
+              placeholder="Escribe o pega aquí el texto a codificar…&#10;&#10;¡Hola, mundo! ñ ✓ 🚀"></textarea>
+            <div class="meta" id="plainMeta">0 caracteres · 0 bytes</div>
+          </div>
+          <div class="pane">
+            <div class="pane-head">
+              <h2>Base64</h2>
+              <div class="btnrow">
+                <button type="button" id="copyB64" class="subtle small">📋 Copiar</button>
+              </div>
+            </div>
+            <textarea id="b64" class="code" spellcheck="false" autocomplete="off" aria-label="Texto en Base64"
+              placeholder="…o pega aquí Base64 para decodificarlo.&#10;&#10;wqFIb2xhLCBtdW5kbyEgw7Eg4pyTIPCfmoA="></textarea>
+            <div class="meta" id="b64Meta">0 caracteres</div>
+          </div>
+        </div>
+        <p id="status" class="status" aria-live="polite" style="margin-top:14px"></p>
+      </section>
+
+      <!-- Archivos -->
+      <section id="panelFile" class="panel" role="tabpanel" aria-labelledby="tabFile" hidden>
+        <div class="layout">
+          <div class="pane">
+            <div class="pane-head"><h2>Archivo → Base64</h2></div>
+            <label class="dropzone" id="dropzone" for="file">
+              <div style="font-size:1.8rem" aria-hidden="true">📂</div>
+              <div><strong>Arrastra un archivo</strong> o haz clic para elegirlo</div>
+              <div class="meta">Imágenes, PDF, fuentes, lo que sea (recomendado &lt; 20 MB)</div>
+            </label>
+            <input id="file" type="file" />
+            <div class="fileinfo" id="fileInfo"></div>
+            <label class="check"><input id="asDataUri" type="checkbox" checked /> Incluir prefijo Data URI (data:tipo;base64,…)</label>
+            <textarea id="fileOut" class="code" readonly spellcheck="false" aria-label="Archivo en Base64"
+              placeholder="Aquí aparecerá el archivo codificado."></textarea>
+            <div class="btnrow">
+              <button type="button" id="copyFile" class="subtle small" disabled>📋 Copiar</button>
+              <button type="button" id="dlTxt" class="subtle small" disabled>⬇ Descargar .txt</button>
+            </div>
+          </div>
+          <div class="pane">
+            <div class="pane-head"><h2>Base64 → Archivo</h2></div>
+            <textarea id="fileIn" class="code" spellcheck="false" aria-label="Base64 o Data URI para convertir en archivo"
+              placeholder="Pega aquí Base64 o un Data URI (data:image/png;base64,…)"></textarea>
+            <div class="btnrow" style="align-items:center">
+              <input id="outName" type="text" class="txt" value="archivo" aria-label="Nombre del archivo" />
+              <button type="button" id="buildBtn" class="primary">🧩 Reconstruir archivo</button>
+            </div>
+            <div class="fileinfo" id="buildInfo"></div>
+            <img id="preview" class="preview" alt="Vista previa de la imagen decodificada" hidden />
+            <div class="btnrow"><a id="dlFile" class="btn ghost small" hidden download>⬇ Descargar archivo</a></div>
+          </div>
+        </div>
+        <p id="fileStatus" class="status" aria-live="polite" style="margin-top:14px"></p>
+      </section>
+    </div>
+
+    <div class="foot">
+      <span>Parte de <a href="../../index.html">Herramientas diarias · Andrey Tech</a></span>
+      <span>JavaScript puro, sin librerías externas · Sin servidores</span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
